@@ -19,6 +19,46 @@ class Staff(db.Model):
     age = db.Column(db.Integer)
     year_employed = db.Column(db.String(20))
 
+class PeopleSearchingPokemon(db.Model):
+    __tablename__ = 'people_searching_pokemon'
+
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(20))
+    last_name = db.Column(db.String(20))
+    searched = db.relationship('Pokemon', backref='searcher')
+    
+class Pokemon(db.Model):
+    __tablename__ = 'pokemon'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20))
+    type_two = db.Column(db.String(20))
+    type_two = db.Column(db.String(20), nullable=True)
+    person_id = db.Column(db.Integer, db.ForeignKey('people_searching_pokemon.id'))
+
+def get_people_searching_pokemon():
+    people = PeopleSearchingPokemon.query.all()
+    formatted_people = []
+    for p in people:
+        formatted_people.append(
+            id = p[id],
+            first_name = p['first_name'],
+            last_name = p['last_name']
+        )
+    return jsonify(formatted_people)
+
+def get_pokemon():
+    pokemon = Pokemon.query.all()
+    formatted_pokemon = []
+    for p in pokemon:
+        formatted_pokemon(
+            id = p[id],
+            first_name = p['name'],
+            type_one = p['type_one'],
+            type_two = p['type_two'],
+        )
+    return jsonify(formatted_pokemon)
+
 def post_students(students: list):
     for s in students:
         student = Students(

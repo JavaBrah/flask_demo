@@ -3,9 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="client.js" defer></script>
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 <body>
-    Flask Body
+    <div>
+        <form id="pokeForm" action="/submit_data" method="POST" default="False">
+            <label for="first_name">First Name</label>
+            <input id="firstName" type="text">
+            <label for="last_name">Last Name</label>
+            <input id="last_name"type="text">
+            <label for="pokeSearch">What pokemon do you want to see?</label>
+            <input id="pokeSearch"type="text">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <div>
+        <p>
+            <ul>     
+                <li>Name: </li>
+                <li>Type 1: </li>
+                <li>Type 2: </li>
+            </ul>
+        </p>
+        <img src="" alt="Searched Pokemon">
+    </div>
 </body>
 </html>
