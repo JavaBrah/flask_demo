@@ -23,27 +23,26 @@ db.init_app(app)
 
 @app.route('/submit_data', methods=['POST'])
 def submit_data():
-    error = None
     pokemon_data = None
     if request.method == 'POST':
-        # first_name = request.form['first_name']
-        # last_name = request.form['last_name']
-        pokemon = request.form['pokeSearch']
-        
-        pokemon_name = request.form(pokemon).strip().lower()
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        pokemon_name = request.form.get('pokeSearch').strip().lower()
         response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{pokemon_name}")
-
-        if response.status_code == 200:
-            data = response.json()
-            pokemon_data = {
-                'name': data['name'].capitalize(),
-                'type_one': data['types'][0]['type']['name'],
-                'type_two': data['types'][1]['type']['name'],
-                'sprite': data['sprites']['front_default']
-            }
-            return jsonify({'success': True, 'pokemon': pokemon_data})
-        else:
+        if response.status_code != 200:
             return jsonify({'success': False, 'error': f"Pokémon '{pokemon_name}' not found."})
+       
+        post_people_searching_pokemon(first_name, last_name)
+        data = response.json()
+        pokemon_data = {
+            'name': data['name'].capitalize(),
+            'type_one': data['types'][0]['type']['name'],
+            'type_two': data['types'][1]['type']['name'] if len(data['types']) > 1 else None,
+        }
+        post_searched_pokemon(**pokemon_data)
+
+        return jsonify({'success': True, 'pokemon': pokemon_data})
+
 
 
 @app.route("/api/v1/staff/", methods=['GET'])

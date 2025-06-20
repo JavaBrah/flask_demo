@@ -25,26 +25,25 @@ class PeopleSearchingPokemon(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(20))
     last_name = db.Column(db.String(20))
-    searched = db.relationship('Pokemon', backref='searcher')
     
 class Pokemon(db.Model):
     __tablename__ = 'pokemon'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
-    type_two = db.Column(db.String(20))
+    type_one = db.Column(db.String(20))
     type_two = db.Column(db.String(20), nullable=True)
-    person_id = db.Column(db.Integer, db.ForeignKey('people_searching_pokemon.id'))
 
 def get_people_searching_pokemon():
     people = PeopleSearchingPokemon.query.all()
     formatted_people = []
     for p in people:
-        formatted_people.append(
-            id = p[id],
-            first_name = p['first_name'],
-            last_name = p['last_name']
-        )
+        formatted_people.append({
+            'id': p.id,
+            'first_name': p['first_name'],
+            'last_name': p['last_name'],
+            'searched': [pokemon.name for pokemon in p.searched]
+        })
     return jsonify(formatted_people)
 
 def get_pokemon():
@@ -59,6 +58,22 @@ def get_pokemon():
         )
     return jsonify(formatted_pokemon)
 
+def post_people_searching_pokemon(f_name, last_n):
+    poke_search_info = PeopleSearchingPokemon(
+        first_name = f_name,
+        last_name = last_n,
+    )
+    db.session.add(poke_search_info)
+    db.session.commit()
+
+def post_searched_pokemon(name, type_one, type_two=None):
+    poke_info = Pokemon(
+        name = name,
+        type_one = type_one,
+        type_two = type_two,
+    )
+ 
+    
 def post_students(students: list):
     for s in students:
         student = Students(
